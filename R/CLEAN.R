@@ -12,7 +12,42 @@ clean_validate_network <- function(A,
                                    directed = FALSE,
                                    allow_isolates = TRUE,
                                    tol = 1e-10) {
-  stop("Not implemented yet")
+
+  if (is.data.frame(A)) A <- as.matrix(A)
+  if (!is.matrix(A)) stop("`A` must be a matrix or coercible to a matrix.")
+  if (nrow(A) != ncol(A)) stop("`A` must be square (nrow == ncol).")
+
+  suppressWarnings(storage.mode(A) <- "numeric")
+  if (anyNA(A)) stop("`A` contains NA values; set missing ties explicitly to 0.")
+
+  rn <- rownames(A)
+  cn <- colnames(A)
+  if (!is.null(rn) && !is.null(cn) && !identical(rn, cn)) {
+    stop("Row and column names of `A` must match.")
+  }
+
+  if (!is.null(ids)) {
+    ids <- as.character(ids)
+    if (!is.null(rn)) {
+      if (!all(ids %in% rn)) stop("Some `ids` not found in rownames(A).")
+      A <- A[ids, ids, drop = FALSE]
+    } else {
+      if (length(ids) != nrow(A)) stop("Length of `ids` must match nrow(A).")
+      rownames(A) <- ids
+      colnames(A) <- ids
+    }
+  }
+
+  if (!directed && max(abs(A - t(A))) > tol) {
+    stop("`A` is not symmetric but `directed = FALSE`.")
+  }
+
+  deg <- rowSums(A != 0) + colSums(A != 0)
+  if (!allow_isolates && any(deg == 0)) {
+    stop("`A` contains isolate nodes.")
+  }
+
+  A
 }
 
 #' Detect latent blocks (minimal wrapper)
