@@ -2,24 +2,36 @@
 % Please edit documentation in R/CLEAN.R
 \name{clean_blocks_by_time}
 \alias{clean_blocks_by_time}
-\title{Detect blocks by time slice}
+\title{Detect blocks by time slice and attach to panel data}
 \usage{
-clean_blocks_by_time(df, id, time, A_by_time, method = "sbm")
+clean_blocks_by_time(
+  df,
+  id,
+  time,
+  A_by_time,
+  model = "bernoulli",
+  out_col = "clean_block",
+  seed = 1
+)
 }
 \arguments{
 \item{df}{panel dataframe}
 
-\item{id}{node id column name}
+\item{id}{column name for unit id (string)}
 
-\item{time}{time column name}
+\item{time}{column name for time (string)}
 
-\item{A_by_time}{named list of adjacency matrices}
+\item{A_by_time}{named list of adjacency matrices; names must match unique(df[[time]])}
 
-\item{method}{block method}
+\item{model}{SBM model (default 'bernoulli')}
+
+\item{out_col}{name of output column to add}
+
+\item{seed}{random seed}
 }
 \value{
-df with a `clean_block` column
+df with out_col added
 }
 \description{
-Detect blocks by time slice
+Detect blocks by time slice and attach to panel data
 }

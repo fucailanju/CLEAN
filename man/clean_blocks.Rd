@@ -2,22 +2,20 @@
 % Please edit documentation in R/CLEAN.R
 \name{clean_blocks}
 \alias{clean_blocks}
-\title{Detect latent blocks (minimal wrapper)}
+\title{Detect latent blocks using SBM (minimal wrapper)}
 \usage{
-clean_blocks(A, method = "sbm", K = "auto", seed = 1)
+clean_blocks(A, model = "bernoulli", seed = 1)
 }
 \arguments{
-\item{A}{adjacency matrix}
+\item{A}{adjacency matrix (square)}
 
-\item{method}{block method, currently 'sbm'}
-
-\item{K}{number of blocks or 'auto'}
+\item{model}{SBM model passed to sbm::estimateSimpleSBM (default 'bernoulli')}
 
 \item{seed}{random seed}
 }
 \value{
-list with membership and metadata
+list with memberships and fit
 }
 \description{
-Detect latent blocks (minimal wrapper)
+Detect latent blocks using SBM (minimal wrapper)
 }

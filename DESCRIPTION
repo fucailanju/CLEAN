@@ -1,17 +1,19 @@
 Package: CLEAN
 Type: Package
-Title: What the Package Does (Title Case)
+Title: CLEAN: Proxy Homophily Adjustment for Contagion Models
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Lingyu", "Fuca",
+      email = "fulingyu0863@gmail.com",
       role = c("aut", "cre")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Description: Tools to (i) validate adjacency matrices, (ii) recover latent block structure
+    using SBM, and (iii) attach block proxies to panel data for downstream contagion
+    regression models.
 License: GPL-2
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.3.3
+Imports:
+    sbm
