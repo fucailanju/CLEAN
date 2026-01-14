@@ -4,25 +4,42 @@
 \alias{clean}
 \title{Apply CLEAN pipeline (minimal)}
 \usage{
-clean(df, id, time, y, contagion, A_by_time, method = "sbm")
+clean(
+  df,
+  formula,
+  id,
+  time,
+  A_by_time,
+  model = "bernoulli",
+  block_col = "clean_block",
+  add_block_fe = TRUE,
+  fit_fun = stats::lm,
+  ...
+)
 }
 \arguments{
 \item{df}{panel dataframe}
 
-\item{id}{node id column}
+\item{formula}{regression formula for the outcome model (without block FE is fine)}
 
-\item{time}{time column}
+\item{id}{unit id column name (string)}
 
-\item{y}{outcome column}
+\item{time}{time column name (string)}
 
-\item{contagion}{contagion regressor column (already constructed by user)}
+\item{A_by_time}{named list of adjacency matrices}
 
-\item{A_by_time}{list of adjacency matrices}
+\item{model}{SBM model (default 'bernoulli')}
 
-\item{method}{block method}
+\item{block_col}{name of block column to create}
+
+\item{add_block_fe}{if TRUE, adds factor(block_col) to the formula}
+
+\item{fit_fun}{model fitting function; default stats::lm}
+
+\item{...}{passed to fit_fun}
 }
 \value{
-list with model + diagnostics
+list with fitted model, augmented data, and diagnostics
 }
 \description{
 Apply CLEAN pipeline (minimal)

@@ -140,14 +140,58 @@ clean_blocks_by_time <- function(df, id, time, A_by_time,
 #' Apply CLEAN pipeline (minimal)
 #'
 #' @param df panel dataframe
-#' @param id node id column
-#' @param time time column
-#' @param y outcome column
-#' @param contagion contagion regressor column (already constructed by user)
-#' @param A_by_time list of adjacency matrices
-#' @param method block method
-#' @return list with model + diagnostics
+#' @param formula regression formula for the outcome model (without block FE is fine)
+#' @param id unit id column name (string)
+#' @param time time column name (string)
+#' @param A_by_time named list of adjacency matrices
+#' @param model SBM model (default 'bernoulli')
+#' @param block_col name of block column to create
+#' @param add_block_fe if TRUE, adds factor(block_col) to the formula
+#' @param fit_fun model fitting function; default stats::lm
+#' @param ... passed to fit_fun
+#' @return list with fitted model, augmented data, and diagnostics
 #' @export
-clean <- function(df, id, time, y, contagion, A_by_time, method = "sbm") {
-  stop("Not implemented yet")
+clean <- function(df, formula, id, time, A_by_time,
+                  model = "bernoulli",
+                  block_col = "clean_block",
+                  add_block_fe = TRUE,
+                  fit_fun = stats::lm,
+                  ...) {
+
+  if (!is.data.frame(df)) stop("`df` must be a data.frame.")
+  if (!inherits(formula, "formula")) stop("`formula` must be a formula.")
+  if (!is.function(fit_fun)) stop("`fit_fun` must be a function.")
+
+  # 1) add blocks
+  df2 <- clean_blocks_by_time(
+    df = df,
+    id = id,
+    time = time,
+    A_by_time = A_by_time,
+    model = model,
+    out_col = block_col
+  )
+
+  # 2) optionally add block FE
+  f2 <- formula
+  if (add_block_fe) {
+    # avoid double-adding if user already included it
+    ftxt <- paste(deparse(formula), collapse = "")
+    if (!grepl(block_col, ftxt, fixed = TRUE)) {
+      f2 <- stats::as.formula(paste0(ftxt, " + factor(", block_col, ")"))
+    }
+  }
+
+  # 3) fit model
+  mod <- fit_fun(f2, data = df2, ...)
+
+  # 4) minimal diagnostics
+  diag <- list(
+    n = nrow(df2),
+    n_time = length(unique(as.character(df2[[time]]))),
+    block_col = block_col,
+    share_no_block = mean(df2[[block_col]] == "no_block", na.rm = TRUE)
+  )
+
+  list(model = mod, data = df2, formula = f2, diagnostics = diag)
 }
