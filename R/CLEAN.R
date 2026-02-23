@@ -226,6 +226,31 @@ clean_validate_network <- function(A,
 }
 
 
+
+#' Validate adjacency matrices for CLEAN (multiple time slices)
+#'
+#' Validates a *named list* of adjacency matrices (e.g., yearly/monthly slices).
+#' For each slice name `nm`, this calls [clean_validate_network()] on `A_by_time[[nm]]`,
+#' optionally aligning node labels/order using `ids_by_time[[nm]]`.
+#'
+#' @param A_by_time Named list of adjacency matrices. Each element must be a square matrix
+#'   (or coercible to matrix). Names should match the time values used in the panel (e.g., "1951").
+#' @param ids_by_time Optional named list of character vectors. If provided, it must contain
+#'   the same names as `A_by_time`. Each `ids_by_time[[nm]]` gives the node IDs for that slice
+#'   (panel ordering) and is passed as `ids=` into [clean_validate_network()].
+#' @param ... Additional arguments forwarded to [clean_validate_network()], e.g.
+#'   `directed`, `value_type`, `sym_action`, `sym_rule`, `zero_diag`, `allow_isolates`.
+#'
+#' @return A named list of validated adjacency matrices, with the same names as `A_by_time`.
+#'
+#' @examples
+#' # Suppose A_by_time is a named list of yearly adjacency matrices:
+#' # A_by_time <- list("2001" = A2001, "2002" = A2002)
+#' # ids_by_time <- list("2001" = ids2001, "2002" = ids2002)
+#' # A_ok <- clean_validate_network_list(A_by_time, ids_by_time,
+#' #   directed = TRUE, value_type = "binary", zero_diag = TRUE)
+#'
+#' @export
 clean_validate_network_list <- function(A_by_time, ids_by_time = NULL, ...) {
   if (!is.list(A_by_time) || is.null(names(A_by_time))) {
     stop("`A_by_time` must be a *named* list of adjacency matrices.")

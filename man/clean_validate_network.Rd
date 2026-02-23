@@ -2,30 +2,47 @@
 % Please edit documentation in R/CLEAN.R
 \name{clean_validate_network}
 \alias{clean_validate_network}
-\title{Validate adjacency matrix for CLEAN}
+\title{Validate adjacency matrix for CLEAN (single slice)}
 \usage{
 clean_validate_network(
   A,
   ids = NULL,
   directed = FALSE,
   allow_isolates = TRUE,
-  tol = 1e-10
+  tol = 1e-10,
+  zero_diag = TRUE,
+  sym_action = c("error", "symmetrize"),
+  sym_rule = c("auto", "avg", "max", "min", "or", "and"),
+  value_type = c("auto", "binary", "count", "nonneg", "any"),
+  allow_negative = FALSE
 )
 }
 \arguments{
 \item{A}{adjacency matrix (matrix/data.frame coercible to matrix)}
 
-\item{ids}{optional character vector of node ids (panel ordering)}
+\item{ids}{optional character vector of node ids in desired order (panel ordering)}
 
-\item{directed}{logical; if FALSE, checks symmetry (within tolerance)}
+\item{directed}{logical; if FALSE, enforce symmetry (or repair via sym_action)}
 
-\item{allow_isolates}{logical; if FALSE, errors if any node has degree 0}
+\item{allow_isolates}{logical; if FALSE, errors if any node has total degree 0}
 
-\item{tol}{numeric tolerance for symmetry check}
+\item{tol}{numeric tolerance (used for symmetry + integer checks)}
+
+\item{zero_diag}{logical; if TRUE, forces diag(A)=0}
+
+\item{sym_action}{what to do if directed=FALSE and A not symmetric:
+"error" or "symmetrize"}
+
+\item{sym_rule}{for symmetrize: "avg" (continuous), "max"/"min" (count), "or"/"and" (binary)}
+
+\item{value_type}{how to validate edge values:
+"auto" (no strict check), "binary", "count", "nonneg", "any"}
+
+\item{allow_negative}{logical; if FALSE, stops if any negative entry}
 }
 \value{
-A validated numeric matrix
+validated numeric matrix
 }
 \description{
-Validate adjacency matrix for CLEAN
+Validate adjacency matrix for CLEAN (single slice)
 }

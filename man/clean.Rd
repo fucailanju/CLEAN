@@ -2,45 +2,67 @@
 % Please edit documentation in R/CLEAN.R
 \name{clean}
 \alias{clean}
-\title{Apply CLEAN pipeline (minimal)}
+\title{Apply CLEAN pipeline (SBM blocks or LSM coordinates)}
 \usage{
 clean(
   df,
   formula,
   id,
   time,
-  A_by_time,
-  model = "bernoulli",
+  A = NULL,
+  A_by_time = NULL,
+  method = c("sbm", "lsm"),
+  directed = TRUE,
+  add_homophily = TRUE,
+  sbm_model = c("bernoulli", "poisson", "gaussian"),
   block_col = "clean_block",
   add_block_fe = TRUE,
+  lsm_d = 2,
+  lsm_cols = "clean_lsm",
+  add_lsm_linear = TRUE,
   fit_fun = stats::lm,
+  seed = 1,
   ...
 )
 }
 \arguments{
 \item{df}{panel dataframe}
 
-\item{formula}{regression formula for the outcome model (without block FE is fine)}
+\item{formula}{outcome model formula (without homophily terms is fine)}
 
 \item{id}{unit id column name (string)}
 
 \item{time}{time column name (string)}
 
-\item{A_by_time}{named list of adjacency matrices}
+\item{A}{single adjacency matrix OR}
 
-\item{model}{SBM model (default 'bernoulli')}
+\item{A_by_time}{named list of adjacency matrices (names match unique(df[[time]]))}
 
-\item{block_col}{name of block column to create}
+\item{method}{"sbm" or "lsm"}
 
-\item{add_block_fe}{if TRUE, adds factor(block_col) to the formula}
+\item{directed}{whether adjacency is directed}
 
-\item{fit_fun}{model fitting function; default stats::lm}
+\item{add_homophily}{if TRUE, auto-add homophily terms to formula}
 
-\item{...}{passed to fit_fun}
+\item{sbm_model}{SBM model: "bernoulli","poisson","gaussian" (used if method="sbm")}
+
+\item{block_col}{name of SBM block column (used if method="sbm")}
+
+\item{add_block_fe}{if TRUE, adds factor(block_col) to formula (SBM only)}
+
+\item{lsm_d}{embedding dimension (default 2) (LSM only)}
+
+\item{lsm_cols}{prefix for LSM coordinate columns (LSM only)}
+
+\item{add_lsm_linear}{if TRUE, adds the coordinate columns to formula (LSM only)}
+
+\item{fit_fun}{model fitting function (default stats::lm)}
+
+\item{...}{passed to fit_fun and/or to SBM/LSM detectors (as appropriate)}
 }
 \value{
-list with fitted model, augmented data, and diagnostics
+list(model, data, formula, diagnostics, method_details)
 }
 \description{
-Apply CLEAN pipeline (minimal)
+CLEAN = detect latent homophily from network(s), augment df, refit outcome model.
 }
